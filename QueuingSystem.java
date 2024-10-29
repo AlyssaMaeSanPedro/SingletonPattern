@@ -1,16 +1,13 @@
 public class QueuingSystem {
-
     private static QueuingSystem instance;
-    private int currentQueueNumber;
-    private int lastServedNumber;
+    private int queueNumber;
+    private boolean isBeingServed;
 
-    // Private constructor to prevent instantiation from outside
     private QueuingSystem() {
-        this.currentQueueNumber = 0;
-        this.lastServedNumber = 0;
+        queueNumber = 0;
+        isBeingServed = false;
     }
 
-    // Public method to provide a global access point for the single instance
     public static synchronized QueuingSystem getInstance() {
         if (instance == null) {
             instance = new QueuingSystem();
@@ -18,35 +15,28 @@ public class QueuingSystem {
         return instance;
     }
 
-    // Method to get the next queue number
-    public synchronized int getNextQueueNumber() {
-        currentQueueNumber++;
-        return currentQueueNumber;
-    }
-
-    // Method to serve the next customer and update the last served number
-    public synchronized void serveNext(String helpDeskId) {
-        if (lastServedNumber < currentQueueNumber) {
-            lastServedNumber++;
-            System.out.println("Help Desk " + helpDeskId + " serving Queue Number: " + lastServedNumber);
+    public synchronized void serveCustomer(String deskId) {
+        if (!isBeingServed) {
+            isBeingServed = true;
+            queueNumber++;
+            System.out.println(deskId + " is now serving customer number " + queueNumber);
         } else {
-            System.out.println("Help Desk " + helpDeskId + ": No more customers in the queue.");
+            System.out.println(deskId + " attempted to serve, but another desk is currently serving customer number " + queueNumber);
         }
     }
 
-    // Method to reset the queue number based on a provided input
-    public synchronized void resetQueueNumber(int newQueueNumber, String helpDeskId) {
-        if (newQueueNumber >= lastServedNumber) {
-            currentQueueNumber = newQueueNumber;
-            System.out.println("Help Desk " + helpDeskId + " reset queue number to: " + currentQueueNumber);
+    public synchronized void callNext(String deskId) {
+        if (isBeingServed) {
+            isBeingServed = false;
+            System.out.println(deskId + " called the next customer.");
         } else {
-            System.out.println("Help Desk " + helpDeskId + ": Invalid reset number. It cannot be less than the last served number.");
+            System.out.println(deskId + " attempted to call the next customer, but no one is currently being served.");
         }
     }
 
-    // Method to display the current status of the queue
-    public synchronized void displayQueueStatus() {
-        System.out.println("Current Queue Number: " + currentQueueNumber);
-        System.out.println("Last Served Number: " + lastServedNumber);
+    public void resetQueue(int number) {
+        queueNumber = number - 1;
+        System.out.println("Queue has been reset to start from customer number: " + number);
+        isBeingServed = false;
     }
 }

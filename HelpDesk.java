@@ -1,19 +1,21 @@
 public class HelpDesk {
-    private String id;
-
-    public HelpDesk(String id) {
-        this.id = id;
-    }
-
-    // Method for serving the next customer
-    public void serveCustomer() {
+    public static void main(String[] args) {
         QueuingSystem queueSystem = QueuingSystem.getInstance();
-        queueSystem.serveNext(this.id);
-    }
 
-    // Method for resetting the queue
-    public void resetQueue(int newQueueNumber) {
-        QueuingSystem queueSystem = QueuingSystem.getInstance();
-        queueSystem.resetQueueNumber(newQueueNumber, this.id);
+        queueSystem.serveCustomer("Desk 1");
+
+        queueSystem.serveCustomer("Desk 2");
+        queueSystem.callNext("Desk 2");
+        queueSystem.serveCustomer("Desk 2");
+
+        queueSystem.callNext("Desk 3");
+        queueSystem.serveCustomer("Desk 3");
+
+        queueSystem.resetQueue(1);
+
+        queueSystem.serveCustomer("Desk 1");
+        
+        queueSystem.callNext("Desk 3");
+        queueSystem.serveCustomer("Desk 3");
     }
 }
